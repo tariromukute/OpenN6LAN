@@ -144,6 +144,7 @@ https://netdevconf.info//0.1/docs/netdev_tutorial_bridge_makita_150213.pdf
 - https://docs.suricata.io/en/latest/setting-up-ipsinline-for-linux.html
 - [Suricata in IPS mode dropping tcp traffic](https://forum.suricata.io/t/suricata-in-ips-mode-dropping-tcp-traffic/1335)
 - [AF_PACKET IPS mode NOT copy tcp ack packet to another I/F](https://forum.suricata.io/t/af-packet-ips-mode-not-copy-tcp-ack-packet-to-another-i-f/3782)
+- [CHARISMA as similar project to N6 LAN](https://ec.europa.eu/research/participants/documents/downloadPublic/ZG9WZHkxRzNibllPVGd0Uys5aVpXUE1Mc2lmdHRYU0N2UWs5NEVEQTVHbzdYSzEyc25pQStBPT0=/attachment/VFEyQTQ4M3ptUWZYTVBpejl0VStaTGxUZFVKT1A1UEM=)
 
 Insprational projects
 - https://github.com/onap/demo/tree/master/vnfs
