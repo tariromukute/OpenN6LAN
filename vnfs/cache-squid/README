@@ -1,0 +1,26 @@
+## Starting in namespace
+
+```bash
+cd /app/vnfs/cache-squid
+
+ip netns exec netovs0 sh install.sh
+
+ip netns exec netovs0 sh config.sh
+
+ip netns exec netovs0 sh start.sh
+```
+
+## Testing 
+
+Try the blocked rule `curl -v http://www.example.org` the response headers should show some cache information. Some like below
+
+```
+< X-Cache: MISS from b345639b6a3e
+< X-Cache-Lookup: NONE from b345639b6a3e:3128
+```
+
+Check logs to see if the cache was access
+
+```bash
+cat /var/log/squid/access.log
+```

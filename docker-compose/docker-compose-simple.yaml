@@ -20,6 +20,7 @@ services:
         networks:
             n6_net:
                 ipv4_address: 192.168.72.136
+                mac_address: 02:42:ac:11:65:43
     n6-lan:
         platform: linux/amd64
         privileged: true
@@ -49,7 +50,6 @@ services:
             - /dev/net/tun:/dev/net/tun # https://docs.openvswitch.org/en/stable/intro/install/userspace/#building-and-installing
         volumes:
             - /lib/modules:/lib/modules
-            - /home/ubuntu/n6-lan:/home
         deploy:
             resources:
                 reservations:
