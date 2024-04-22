@@ -25,7 +25,7 @@ services:
         privileged: true
         init: true
         container_name: "n6-lan"
-        image: tariromukute/n6-lan-simple:latest
+        image: tariromukute/openn6lan-ovs:latest
         command: 
         - /bin/bash
         - -c
@@ -60,20 +60,6 @@ services:
             data_net:
                 ipv4_address: 192.168.73.138
 
-    # suricata:
-    #   privileged: true
-    #   # platform: linux/amd64
-    #   container_name: "suricata"
-    #   command: -i eth0
-    #   image: jasonish/suricata:latest
-    #   cap_add:
-    #       - NET_ADMIN
-    #       - NET_RAW
-    #       - SYS_NICE
-    #   networks:
-    #       data_net:
-    #           ipv4_address: 192.168.73.140
-
     server:
         privileged: true
         platform: linux/amd64
@@ -91,26 +77,6 @@ services:
         networks:
             data_net:
                 ipv4_address: 192.168.73.137
-
-    dropwatch:
-        privileged: true
-        platform: linux/amd64
-        container_name: "dropwatch"
-        image: debian:latest
-        command: 
-        - /bin/bash
-        - -c
-        - |
-            apt update -y
-            apt install dropwatch -y
-            echo 0 > /proc/sys/kernel/kptr_restrict
-            tail -f /dev/null
-        volumes:
-        - /usr/src:/usr/src:ro 
-        - /lib/modules/:/lib/modules:ro 
-        - /sys/:/sys/:rw 
-        pid: 'host'
-        network_mode: host
 
 networks:
     n6_net:

@@ -3,8 +3,7 @@
 # Copy the config files
 
 mkdir -p /var/lib/suricata/rules/
-cp suricata.rules /var/lib/suricata/rules/suricata.rules
-cp local.rules /var/lib/suricata/rules/local.rules
+cp -r ./rules/* /var/lib/suricata/rules/
 
 cp suricata /etc/default/suricata
 

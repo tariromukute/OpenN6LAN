@@ -1,1 +1,1 @@
-docker buildx build --platform=linux/amd64 -t tariromukute/n6-lan-simple:latest -f Dockerfile .
+docker buildx build --platform=linux/amd64 -t tariromukute/openn6lan-ovs:latest -f Dockerfile .
