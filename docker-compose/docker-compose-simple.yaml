@@ -1,0 +1,131 @@
+version: '3.8'
+services:
+    client:
+        privileged: true
+        platform: linux/amd64
+        container_name: "client"
+        image: ubuntu:jammy
+        command: 
+        - /bin/bash
+        - -c
+        - |
+            apt update -y
+            apt install iperf3 curl -y
+            apt install -y iproute2 iputils-ping tcpdump
+            ip route del default
+            ip route add default via 192.168.72.138 dev eth0
+            tail -f /dev/null
+        cap_add:
+            - NET_ADMIN
+        networks:
+            n6_net:
+                ipv4_address: 192.168.72.136
+    n6-lan:
+        platform: linux/amd64
+        privileged: true
+        init: true
+        container_name: "n6-lan"
+        image: tariromukute/n6-lan-simple:latest
+        command: 
+        - /bin/bash
+        - -c
+        - |
+            sh testovs.sh
+            # ovs-vsctl add-br brovs1
+            ovs-vsctl add-port brovs1 eth1
+            ip addr flush dev eth1 && ip addr add 192.168.72.138/26 dev brovs1 && ip link set brovs1 up
+            ip route add 12.1.1.0/24 via 192.168.72.134 dev brovs1
+
+
+            ovs-vsctl add-port brovs1 eth0
+            ip addr flush dev eth0 && ip addr add 192.168.73.138/26 dev brovs1 && ip link set brovs1 up
+            iptables -t nat -A POSTROUTING -o brovs1 -j MASQUERADE
+
+            ip route del default
+            ip route add default via 192.168.73.129 dev brovs1
+
+            tail -f /dev/null
+        devices:
+            - /dev/net/tun:/dev/net/tun # https://docs.openvswitch.org/en/stable/intro/install/userspace/#building-and-installing
+        volumes:
+            - /lib/modules:/lib/modules
+            - /home/ubuntu/n6-lan:/home
+        deploy:
+            resources:
+                reservations:
+                    memory: 2G
+        networks:
+            n6_net:
+                ipv4_address: 192.168.72.138
+            data_net:
+                ipv4_address: 192.168.73.138
+
+    # suricata:
+    #   privileged: true
+    #   # platform: linux/amd64
+    #   container_name: "suricata"
+    #   command: -i eth0
+    #   image: jasonish/suricata:latest
+    #   cap_add:
+    #       - NET_ADMIN
+    #       - NET_RAW
+    #       - SYS_NICE
+    #   networks:
+    #       data_net:
+    #           ipv4_address: 192.168.73.140
+
+    server:
+        privileged: true
+        platform: linux/amd64
+        container_name: "server"
+        image: ubuntu:jammy
+        command: 
+        - /bin/bash
+        - -c
+        - |
+            apt update -y
+            apt install iperf3 -y
+            iperf3 -s
+        cap_add:
+            - NET_ADMIN
+        networks:
+            data_net:
+                ipv4_address: 192.168.73.137
+
+    dropwatch:
+        privileged: true
+        platform: linux/amd64
+        container_name: "dropwatch"
+        image: debian:latest
+        command: 
+        - /bin/bash
+        - -c
+        - |
+            apt update -y
+            apt install dropwatch -y
+            echo 0 > /proc/sys/kernel/kptr_restrict
+            tail -f /dev/null
+        volumes:
+        - /usr/src:/usr/src:ro 
+        - /lib/modules/:/lib/modules:ro 
+        - /sys/:/sys/:rw 
+        pid: 'host'
+        network_mode: host
+
+networks:
+    n6_net:
+        driver: bridge
+        name: demo-n6-net
+        ipam:
+            config:
+                - subnet: 192.168.72.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-n6"
+    data_net:
+        driver: bridge
+        name: demo-data-net
+        ipam:
+            config:
+                - subnet: 192.168.73.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-dn"

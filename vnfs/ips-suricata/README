@@ -1,0 +1,27 @@
+
+
+## Starting in namespace
+
+```bash
+cd /app/vnfs/ips-suricata
+
+ip netns exec netovs0 sh install.sh
+
+ip netns exec netovs0 sh config.sh
+
+ip netns exec netovs0 sh start.sh
+```
+
+## Testing 
+
+Try the blocked rule `curl --max-time 5 http://testmynids.org/uid/index.html` it should timeout
+
+Check the rules have been applied
+
+```bash
+jq 'select(.alert .signature_id==2100498)' /var/log/suricata/eve.json
+```
+
+**Useful Resources**
+- [How To Install Suricata on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-suricata-on-ubuntu-20-04)
+- https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99

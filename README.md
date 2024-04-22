@@ -1,0 +1,1 @@
+docker buildx build --platform=linux/amd64 -t tariromukute/n6-lan-simple:latest -f Dockerfile .

@@ -1,0 +1,6 @@
+drop ssh any any -> 192.168.73.137 !22 (msg:"SSH TRAFFIC on non-SSH port"; flow:to_client, not_established; classtype: misc-attack; target: dest_ip; sid:1000000;)
+drop ssh any any -> 2604:a880:cad:d0::dc8:4001/64 !22 (msg:"SSH TRAFFIC on non-SSH port"; flow:to_client, not_established; classtype: misc-attack; target: dest_ip; sid:1000001;)
+drop http any any -> 192.168.73.137 !80 (msg:"HTTP REQUEST on non-HTTP port"; flow:to_client, not_established; classtype:misc-activity; sid:1000002;)
+drop http any any -> 2001:DB8::1/32 !80 (msg:"HTTP REQUEST on non-HTTP port"; flow:to_client, not_established; classtype:misc-activity; sid:1000003;)
+drop icmp any any -> 192.168.73.137 any (msg:"Dropping all ICMP traffic to 192.168.73.137";  sid:1000004; rev:1;)
+drop ip any any -> any any (msg:"GPL ATTACK_RESPONSE id check returned root"; content:"uid=0|28|root|29|"; classtype:bad-unknown; sid:2100498; rev:7; metadata:created_at 2010_09_23, updated_at 2019_07_26;)
