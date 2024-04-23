@@ -24,3 +24,7 @@ Check logs to see if the cache was access
 ```bash
 cat /var/log/squid/access.log
 ```
+
+**Useful resources**
+- [Linux traffic Interception using REDIRECT](https://wiki.squid-cache.org/ConfigExamples/Intercept/LinuxRedirect)
+- [Feature: TPROXY version 4.1+](https://wiki.squid-cache.org/Features/Tproxy4)

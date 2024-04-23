@@ -139,12 +139,14 @@ https://netdevconf.info//0.1/docs/netdev_tutorial_bridge_makita_150213.pdf
 - NAT'ing with OVS http://www.openvswitch.org/support/ovscon2014/17/1030-conntrack_nat.pdf
 - OVS with NAT set up https://matthewarcus.wordpress.com/2018/02/04/veth-devices-network-namespaces-and-open-vswitch/
 - Some more NAT'ing exprience https://ilearnedhowto.wordpress.com/tag/nat/
-- What Is iptables and How to Use It? https://medium.com/skilluped/what-is-iptables-and-how-to-use-it-781818422e52
+- [What Is iptables and How to Use It?](https://medium.com/skilluped/what-is-iptables-and-how-to-use-it-781818422e52)
 - Explanation on iptables rules https://serverfault.com/questions/1101158/create-an-nfqueue-rule-to-match-a-local-addresses-destination-in-my-raspberry-pi
 - https://docs.suricata.io/en/latest/setting-up-ipsinline-for-linux.html
 - [Suricata in IPS mode dropping tcp traffic](https://forum.suricata.io/t/suricata-in-ips-mode-dropping-tcp-traffic/1335)
 - [AF_PACKET IPS mode NOT copy tcp ack packet to another I/F](https://forum.suricata.io/t/af-packet-ips-mode-not-copy-tcp-ack-packet-to-another-i-f/3782)
 - [CHARISMA as similar project to N6 LAN](https://ec.europa.eu/research/participants/documents/downloadPublic/ZG9WZHkxRzNibllPVGd0Uys5aVpXUE1Mc2lmdHRYU0N2UWs5NEVEQTVHbzdYSzEyc25pQStBPT0=/attachment/VFEyQTQ4M3ptUWZYTVBpejl0VStaTGxUZFVKT1A1UEM=)
+- [CAPTURING TRAFFIC WITH TCPDUMP AND NFTABLES](https://covert.sh/2021/02/02/tcpdump-nflog-nftables/)
+- [IPTables Logging in JSON with NFLOG and ulogd2](https://jmorano.moretrix.com/2022/03/logging-in-iptables-with-nflog-and-ulogd2/)
 
 Insprational projects
 - https://github.com/onap/demo/tree/master/vnfs

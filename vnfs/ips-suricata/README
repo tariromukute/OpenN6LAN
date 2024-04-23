@@ -23,5 +23,7 @@ jq 'select(.alert .signature_id==2100498)' /var/log/suricata/eve.json
 ```
 
 **Useful Resources**
+- [Setting up IPS/inline for Linux](https://docs.suricata.io/en/latest/setting-up-ipsinline-for-linux.html)
 - [How To Install Suricata on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-suricata-on-ubuntu-20-04)
 - https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99
+- [Suricata in IPS mode dropping tcp traffic](https://forum.suricata.io/t/suricata-in-ips-mode-dropping-tcp-traffic/1335)
