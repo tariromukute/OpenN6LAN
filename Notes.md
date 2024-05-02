@@ -101,29 +101,37 @@ The processing flow diagram by By Jan Engelhardt - Own work, Origin SVG PNG, CC 
 
 Log packets with iptables to see where packets are being dropped
 
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout=0
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout_stream=0
+
+
 ```bash
 # can be read with dmesg(1) or read in the syslog
 ip netns exec netovs0 iptables -t raw -I PREROUTING 1 -j NFLOG --nflog-prefix "iptables-raw-prerouting: " --nflog-group 3
-ip netns exec netovs0 iptables -t mangle -I PREROUTING 1 -j NFLOG --nflog-prefix "iptables-mangle-prerouting: " --nflog-group 4
-ip netns exec netovs0 iptables -t nat -I PREROUTING 1 -j NFLOG --nflog-prefix "iptables-nat-prerouting: " --nflog-group 5
+ip netns exec netovs0 iptables -t mangle -s 12.1.1.0/24 -I PREROUTING 1 -j NFLOG --nflog-prefix "iptables-mangle-prerouting: " --nflog-group 4
+ip netns exec netovs0 iptables -t nat -s 12.1.1.0/24 -I PREROUTING 1 -j NFLOG --nflog-prefix "iptables-nat-prerouting: " --nflog-group 5
 
-ip netns exec netovs0 iptables -t mangle -I FORWARD 1 -j NFLOG --nflog-prefix "iptables-mangle-forward: " --nflog-group 7
-ip netns exec netovs0 iptables -t filter -I FORWARD 1 -j NFLOG --nflog-prefix "iptables-nat-forward: " --nflog-group 8
+ip netns exec netovs0 iptables -t mangle -s 12.1.1.0/24 -I FORWARD 1 -j NFLOG --nflog-prefix "iptables-mangle-forward: " --nflog-group 7
+ip netns exec netovs0 iptables -t filter -s 12.1.1.0/24 -I FORWARD 1 -j NFLOG --nflog-prefix "iptables-nat-forward: " --nflog-group 8
 
-ip netns exec netovs0 iptables -t nat -I POSTROUTING 1 -j NFLOG --nflog-prefix "iptables-nat-postrouting: " --nflog-group 10
-ip netns exec netovs0 iptables -t mangle -I POSTROUTING 1 -j NFLOG --nflog-prefix "iptables-mangle-postrouting: " --nflog-group 11
+ip netns exec netovs0 iptables -t nat -s 12.1.1.0/24 -I POSTROUTING 1 -j NFLOG --nflog-prefix "iptables-nat-postrouting: " --nflog-group 10
+ip netns exec netovs0 iptables -t mangle -s 12.1.1.0/24 -I POSTROUTING 1 -j NFLOG --nflog-prefix "iptables-mangle-postrouting: " --nflog-group 11
 
-ip netns exec netovs0 iptables -t mangle -I INPUT 1 -j NFLOG --nflog-prefix "iptables-mangle-input: " --nflog-group 13
-ip netns exec netovs0 iptables -t filter -I INPUT 1 -j NFLOG --nflog-prefix "iptables-filter-input: " --nflog-group 14
+ip netns exec netovs0 iptables -t mangle -A POSTROUTING -s 12.1.1.0/24 -j MARK --set-mark 0x10502
 
-ip netns exec netovs0 iptables -t raw -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-raw-output: " --nflog-group 16
-ip netns exec netovs0 iptables -t mangle -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-mangle-output: " --nflog-group 17
-ip netns exec netovs0 iptables -t nat -I OUTPUT 1 -j NFLOG --nflog-prefix "iptable-nat-output: " --nflog-group 18
-ip netns exec netovs0 iptables -t filter -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-filter-output: " --nflog-group 19
+ip netns exec netovs0 iptables -t mangle -s 12.1.1.0/24 -I INPUT 1 -j NFLOG --nflog-prefix "iptables-mangle-input: " --nflog-group 13
+ip netns exec netovs0 iptables -t filter -s 12.1.1.0/24 -I INPUT 1 -j NFLOG --nflog-prefix "iptables-filter-input: " --nflog-group 14
+
+ip netns exec netovs0 iptables -t raw -s 12.1.1.0/24 -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-raw-output: " --nflog-group 16
+ip netns exec netovs0 iptables -t mangle -s 12.1.1.0/24 -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-mangle-output: " --nflog-group 17
+ip netns exec netovs0 iptables -t nat -s 12.1.1.0/24 -I OUTPUT 1 -j NFLOG --nflog-prefix "iptable-nat-output: " --nflog-group 18
+ip netns exec netovs0 iptables -t filter -s 12.1.1.0/24 -I OUTPUT 1 -j NFLOG --nflog-prefix "iptables-filter-output: " --nflog-group 19
 
 
 ip netns exec netovs0 ebtables -t broute -I BROUTING 1 -j NFLOG --nflog-prefix "ebtables-broute-brouting: " --nflog-group 21
 ip netns exec netovs0 ebtables -t nat -I PREROUTING 1 -j NFLOG --nflog-prefix "ebtables-broute-brouting: " --nflog-group 22
+
+ip netns exec netovs0 iptables -t nat -s 12.1.1.0/24 -I DOCKER_OUTPUT 1 -j NFLOG --nflog-prefix "iptables-nat-postrouting: " --nflog-group 23
 
 ip netns exec netovs0 tcpdump -i nflog:<nflog-group> -vvv
 ```
@@ -132,6 +140,87 @@ Identifying the packets that were MAS so that we can send them via the bridge
 ```bash
 iptables -t mangle -A PREROUTING -i eth0 -m conntrack --ctstate SNAT -j NFLOG --nflog-prefix "iptables-conntrack-prerouting: " --nflog-group 25
 ```
+
+Mark packets with conntrack
+```bash
+iptables -t mangle -A PREROUTING -m -s 12.1.1.0/24 --set-mark 1
+```
+
+Stop conntrack
+```bash
+iptables -t raw -A PREROUTING -j NOTRACK
+iptables -t raw -A OUTPUT -j NOTRACK
+```
+
+Check with bpftrace for functions that are not being called.
+
+Started with `sudo bpftrace -lv | grep nf_nat` to get the entrypoints for nat related functions.
+Tested with the following
+```bash
+ip netns exec uegtp0 ping -c 2 8.8.8.8
+ip netns exec uegtp0 curl -v http://detectportal.firefox.com/success.txt
+```
+
+```bash
+bpftrace -e 'kprobe:__nf_nat_alloc_null_binding { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:__nf_nat_decode_session { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:__nf_nat_mangle_tcp_packet { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_alloc_null_binding { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_cleanup_conntrack { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_csum_recalc { printf("function was called!\n"); }'
+# None triggered it
+bpftrace -e 'kprobe:nf_nat_follow_master { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_helper_put { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_helper_register { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_helper_try_module_get { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_helper_unregister { printf("function was called!\n"); }'
+# None
+bpftrace -e 'kprobe:nf_nat_icmp_reply_translation { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_icmpv6_reply_translation { printf("function was called!\n"); }'
+# This is called al lot of times before we even started sending packets
+bpftrace -e 'kprobe:nf_nat_inet_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_inet_register_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_inet_unregister_fn { printf("function was called!\n"); }'
+# This is called al lot of times before we even started sending packets
+bpftrace -e 'kprobe:nf_nat_ipv4_local_fn { printf("function was called!\n"); }'
+#
+bpftrace -e 'kprobe:nf_nat_ipv4_local_in { printf("function was called!\n"); }'
+# Only triggered by ICMP packets
+bpftrace -e 'kprobe:nf_nat_ipv4_manip_pkt { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv4_out { printf("function was called!\n"); }'
+# This is called al lot of times before we even started sending packets
+bpftrace -e 'kprobe:nf_nat_ipv4_pre_routing { printf("function was called! %d\n", ((struct sk_buff *)arg1)->daddr) }'
+bpftrace -e 'kprobe:nf_nat_ipv4_pre_routing { printf("function was called! %d\n", (ip_hdr(arg1)->daddr) }'
+bpftrace -e 'kprobe:nf_nat_ipv4_register_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv4_unregister_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_in { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_local_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_manip_pkt { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_out { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_register_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_ipv6_unregister_fn { printf("function was called!\n"); }'
+# None
+bpftrace -e 'kprobe:nf_nat_l4proto_unique_tuple { printf("function was called!\n"); }'
+# None
+bpftrace -e 'kprobe:nf_nat_mangle_udp_packet { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_manip_pkt { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_masquerade_inet_register_notifiers { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_masquerade_inet_unregister_notifiers { printf("function was called!\n"); }'
+# Only triggered by ICMP packets
+bpftrace -e 'kprobe:nf_nat_masquerade_ipv4 { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_masquerade_ipv6 { printf("function was called!\n"); }'
+# None
+bpftrace -e 'kprobe:nf_nat_packet { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_proto_clean { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_redirect.isra.0 { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_redirect_ipv4 { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_redirect_ipv6 { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_register_fn { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_setup_info { printf("function was called!\n"); }'
+bpftrace -e 'kprobe:nf_nat_unregister_fn { printf("function was called!\n"); }'
+```
+
 Resources
 - How to solve the flooding https://www.net.in.tum.de/fileadmin/TUM/NET/NET-2019-06-1/NET-2019-06-1_09.pdf
 http://arthurchiao.art/blog/ovs-unknown-unicast-flooding-under-distributed-gw/
@@ -147,6 +236,13 @@ https://netdevconf.info//0.1/docs/netdev_tutorial_bridge_makita_150213.pdf
 - [CHARISMA as similar project to N6 LAN](https://ec.europa.eu/research/participants/documents/downloadPublic/ZG9WZHkxRzNibllPVGd0Uys5aVpXUE1Mc2lmdHRYU0N2UWs5NEVEQTVHbzdYSzEyc25pQStBPT0=/attachment/VFEyQTQ4M3ptUWZYTVBpejl0VStaTGxUZFVKT1A1UEM=)
 - [CAPTURING TRAFFIC WITH TCPDUMP AND NFTABLES](https://covert.sh/2021/02/02/tcpdump-nflog-nftables/)
 - [IPTables Logging in JSON with NFLOG and ulogd2](https://jmorano.moretrix.com/2022/03/logging-in-iptables-with-nflog-and-ulogd2/)
+- [Load balancing with IPVS](https://medium.com/google-cloud/load-balancing-with-ipvs-1c0a48476c4d)
+- [IPVS, iptables and kube-proxy](https://www.digihunch.com/2020/11/ipvs-iptables-and-kube-proxy/)
+- https://superuser.com/questions/1781760/iptables-nat-table-does-not-work-as-expected
+- https://serverfault.com/questions/1030236/when-does-iptables-conntrack-module-track-states-of-packets
+- https://unix.stackexchange.com/questions/650009/how-to-reset-sessions-in-nat-table
+- [NAT table seems to be skipped for TCP traffic](https://www.spinics.net/lists/netfilter/msg59933.html)
+- https://lists.archive.carbon60.com/iptables/user/55934
 
 Insprational projects
 - https://github.com/onap/demo/tree/master/vnfs
