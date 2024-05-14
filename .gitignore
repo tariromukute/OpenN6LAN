@@ -1,0 +1,16 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+*.s
+*.ll
+
+*.pcap
+*.pcapng
+
+*.log
+
+# VS Code
+.vscode/
+.DS_Store

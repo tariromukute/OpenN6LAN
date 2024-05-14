@@ -20,6 +20,9 @@ Check the rules have been applied
 
 ```bash
 jq 'select(.alert .signature_id==2100498)' /var/log/suricata/eve.json
+
+# Check for traffic that has been blocked
+jq 'select(.alert .action=="blocked")' /var/log/suricata/eve.json
 ```
 
 **Useful Resources**
