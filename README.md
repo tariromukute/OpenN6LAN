@@ -26,8 +26,7 @@ git clone https://github.com/tariromukute/OpenN6LAN.git
 cd OpenN6LAN
 ```
 
-**Run the services**
-This sets up
+**Run the services**:
 * [eUPF](https://github.com/edgecomllc/eupf) for the 5G Core data plane
 * [PFCP Simulator](https://github.com/infinitydon/pfcp-kitchen-sink) for emulating the PFCP message setting up session
 * [UE Sim](https://github.com/tariromukute/tc-gtpu.git) emulating User Equipment (UE) devices
