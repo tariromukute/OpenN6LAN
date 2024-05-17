@@ -33,6 +33,7 @@ cd OpenN6LAN
 * [N6-LAN](https://github.com/tariromukute/OpenN6LAN): For steering the traffic through service functions.
 
 ```bash
+cd docker-compose
 docker-compose -f docker-compose-eupf.yaml up -d
 ```
 
