@@ -97,9 +97,25 @@ services:
         networks:
             public_net:
                 ipv4_address: 192.168.70.132
+    oai-pcf:
+        container_name: "oai-pcf"
+        image: oaisoftwarealliance/oai-pcf:v2.0.1
+        expose:
+            - 80/tcp
+            - 8080/tcp
+        volumes:
+            - ./policies/steering:/openair-pcf/policies
+            - ./conf/basic_nrf_eupf_config.yaml:/openair-pcf/etc/config.yaml
+        environment:
+            - TZ=Europe/Paris
+        depends_on:
+            - oai-nrf
+        networks:
+            public_net:
+                ipv4_address: 192.168.70.139
     oai-smf:
         container_name: "oai-smf"
-        image: oaisoftwarealliance/oai-smf:develop
+        image: tariromukute/oai-smf:sfc-develop
         expose:
             - 80/tcp
             - 8080/tcp

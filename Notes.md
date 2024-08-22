@@ -248,3 +248,16 @@ Insprational projects
 - https://github.com/onap/demo/tree/master/vnfs
 - https://osm.etsi.org/wikipub/index.php/VNFs
 - https://www.digitalocean.com/community/tutorials/how-to-configure-suricata-as-an-intrusion-prevention-system-ips-on-debian-11
+
+```bash
+docker build --target oai-smf --tag tariromukute/oai-smf:sfc-latest \
+               --file docker/Dockerfile.smf.ubuntu \
+               --build-arg BASE_IMAGE=ubuntu:jammy \
+               .
+
+               --build-arg BASE_IMAGE=ubuntu:bionic \
+               --no-cache \
+docker buildx build --target oai-smf --tag tariromukute/oai-smf:sfc-develop \
+               --file docker/Dockerfile.smf.ubuntu \
+               .
+```
