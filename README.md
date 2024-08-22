@@ -37,6 +37,31 @@ cd docker-compose
 docker-compose -f docker-compose-eupf.yaml up -d
 ```
 
+**Perf testing with Cisco Trex**
+
+```bash
+# Launch a shell inside the trex container
+docker compose -f docker-compose-trex-eupf.yaml exec trex /bin/bash
+
+# Start the interactive trex console which will make a local connection to the running interactive daemon
+./trex-console
+
+# Activating GTPU mode
+tunnel --type gtpu --loopback
+
+# loading the gtpu_topo profile
+tunnels_topo load -f /etc/trex_gtpu_topo.py
+
+# show tunnel topology
+tunnels_topo show
+
+# To interact with and view statistics for the current stream launch the text-based user interface (tui)
+tui
+
+# Start generating some traffic
+start -f astf/trex_http_simple.py -m 2000 -d 20
+```
+
 ## Building project
 
 ### Build docker image

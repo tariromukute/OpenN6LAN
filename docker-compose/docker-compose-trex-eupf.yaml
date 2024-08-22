@@ -1,0 +1,145 @@
+version: '3.8'
+services:
+    pfcp-kitchen-sink:
+        container_name: "pfcp-kitchen-sink"
+        platform: linux/amd64
+        image: tariromukute/pfcp-kitchen-sink:latest
+        volumes:
+            - ./conf/sessions_trex_eupf_50.yaml:/app/sessions.yaml
+        command: ./pfcpclient -r 192.168.70.134:8805 -s sessions.yaml
+        depends_on:
+            - edgecomllc-eupf
+        networks:
+            n4_net:
+                ipv4_address: 192.168.70.131
+    trex:
+      image: tariromukute/cisco-trex:latest
+      container_name: "trex"
+      hostname: "trex"
+      stdin_open: true
+      tty: true   
+      ports:
+        - "4500:4500"
+        - "4501:4501"
+        - "4507:4507"
+        - "4500:4500/udp"
+        - "4501:4501/udp"
+        - "4507:4507/udp"
+      networks:
+        n4_net:
+          ipv4_address: 192.168.70.130
+          priority: 1000
+        n3_net:
+          ipv4_address: 192.168.71.130
+          priority: 900
+        data_net:
+          ipv4_address: 192.168.73.137
+          priority: 800
+      deploy:
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+      volumes:
+        - ./conf/trex_eupf_cfg.yaml:/etc/trex_cfg.yaml
+        - ./scripts/trex_gtpu_topo.py:/etc/trex_gtpu_topo.py
+        - ./scripts/trex_http_simple.py:/v3.05/astf/trex_http_simple.py
+      command: ["./t-rex-64", "-i", "--astf", "--software", "--tso-disable", "--cfg", "/etc/trex_cfg.yaml"]
+      privileged: true
+
+    edgecomllc-eupf:
+        platform: linux/amd64
+        container_name: "edgecomllc-eupf"
+        image: ghcr.io/edgecomllc/eupf:main
+        entrypoint:
+        - /bin/sh
+        - -c
+        - |
+            sysctl -w net.ipv4.conf.eth2.send_redirects=0;
+            sysctl -w net.ipv4.conf.all.send_redirects=0;
+            ip route del default;
+            ip route add default via 192.168.72.138 dev eth2 &&
+            sh /app/bin/entrypoint.sh
+        environment:
+            - UPF_INTERFACE_NAME=eth0,eth2
+            - UPF_XDP_ATTACH_MODE=generic
+            - UPF_API_ADDRESS=:8080
+            - UPF_PFCP_ADDRESS=:8805
+            - UPF_METRICS_ADDRESS=:9091
+            - UPF_PFCP_NODE_ID=192.168.70.134
+            - UPF_N3_ADDRESS=192.168.71.134
+            - UPF_UEIP_POOL=16.0.0.0/24
+            - UPF_LOGGING_LEVEL=debug
+        cap_add:
+            - NET_ADMIN
+            - SYS_ADMIN
+            - SYS_RESOURCE # setrlimit
+        cap_drop:
+            - ALL
+        ports:
+            - "127.0.0.1:8081:8081"
+            - "127.0.0.1:8880:8080"
+            - "127.0.0.1:9090:9090"
+        sysctls:
+            - net.ipv4.conf.all.forwarding=1
+        privileged: true
+        networks:
+            n4_net:
+                ipv4_address: 192.168.70.134
+            n3_net:
+                ipv4_address: 192.168.71.134
+            n6_net:
+                ipv4_address: 192.168.72.134
+                mac_address: 02:42:ac:11:65:43
+    oai-ext-dn:
+        privileged: true
+        init: true
+        container_name: "oai-ext-dn"
+        image: oaisoftwarealliance/trf-gen-cn5g:latest
+        entrypoint: /bin/bash -c \
+              "iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE;"\
+              "ip route add 48.0.0.0/24 via 192.168.73.137 dev eth0;"\
+              "ip route add 16.0.0.0/24 via 192.168.72.134 dev eth1; ip route; sleep infinity"
+        command: ["/bin/bash", "-c", "trap : SIGTERM SIGINT; sleep infinity & wait"]
+        healthcheck:
+            test: /bin/bash -c "iptables -L -t nat | grep MASQUERADE"
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            n6_net:
+              ipv4_address: 192.168.72.138
+            data_net:
+              ipv4_address: 192.168.73.138
+networks:
+    n4_net:
+        driver: bridge
+        name: demo-n4-net
+        ipam:
+            config:
+                - subnet: 192.168.70.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-n4"
+    n3_net:
+        driver: bridge
+        name: demo-n3-net
+        ipam:
+            config:
+                - subnet: 192.168.71.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-n3"
+    n6_net:
+        driver: bridge
+        name: demo-n6-net
+        ipam:
+            config:
+                - subnet: 192.168.72.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-n6"
+    data_net:
+        driver: bridge
+        name: demo-data-net
+        ipam:
+            config:
+                - subnet: 192.168.73.128/26
+        driver_opts:
+            com.docker.network.bridge.name: "demo-dn"

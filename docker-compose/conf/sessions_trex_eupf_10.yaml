@@ -1,0 +1,390 @@
+- fars:
+  - applyAction: Forward
+    farID: 1
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 2
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 1
+  pdrs:
+  - farID: 1
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 1
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.1
+        isDestination: false
+    pdrID: 1
+    precedence: 0
+  - farID: 2
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.1
+        isDestination: true
+    pdrID: 2
+    precedence: 0
+  seid: 1
+- fars:
+  - applyAction: Forward
+    farID: 3
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 4
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 2
+  pdrs:
+  - farID: 3
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 2
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.2
+        isDestination: false
+    pdrID: 3
+    precedence: 0
+  - farID: 4
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.2
+        isDestination: true
+    pdrID: 4
+    precedence: 0
+  seid: 2
+- fars:
+  - applyAction: Forward
+    farID: 5
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 6
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 3
+  pdrs:
+  - farID: 5
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 3
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.3
+        isDestination: false
+    pdrID: 5
+    precedence: 0
+  - farID: 6
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.3
+        isDestination: true
+    pdrID: 6
+    precedence: 0
+  seid: 3
+- fars:
+  - applyAction: Forward
+    farID: 7
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 8
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 4
+  pdrs:
+  - farID: 7
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 4
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.4
+        isDestination: false
+    pdrID: 7
+    precedence: 0
+  - farID: 8
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.4
+        isDestination: true
+    pdrID: 8
+    precedence: 0
+  seid: 4
+- fars:
+  - applyAction: Forward
+    farID: 9
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 10
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 5
+  pdrs:
+  - farID: 9
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 5
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.5
+        isDestination: false
+    pdrID: 9
+    precedence: 0
+  - farID: 10
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.5
+        isDestination: true
+    pdrID: 10
+    precedence: 0
+  seid: 5
+- fars:
+  - applyAction: Forward
+    farID: 11
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 12
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 6
+  pdrs:
+  - farID: 11
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 6
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.6
+        isDestination: false
+    pdrID: 11
+    precedence: 0
+  - farID: 12
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.6
+        isDestination: true
+    pdrID: 12
+    precedence: 0
+  seid: 6
+- fars:
+  - applyAction: Forward
+    farID: 13
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 14
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 7
+  pdrs:
+  - farID: 13
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 7
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.7
+        isDestination: false
+    pdrID: 13
+    precedence: 0
+  - farID: 14
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.7
+        isDestination: true
+    pdrID: 14
+    precedence: 0
+  seid: 7
+- fars:
+  - applyAction: Forward
+    farID: 15
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 16
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 8
+  pdrs:
+  - farID: 15
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 8
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.8
+        isDestination: false
+    pdrID: 15
+    precedence: 0
+  - farID: 16
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.8
+        isDestination: true
+    pdrID: 16
+    precedence: 0
+  seid: 8
+- fars:
+  - applyAction: Forward
+    farID: 17
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 18
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 9
+  pdrs:
+  - farID: 17
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 9
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.9
+        isDestination: false
+    pdrID: 17
+    precedence: 0
+  - farID: 18
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.9
+        isDestination: true
+    pdrID: 18
+    precedence: 0
+  seid: 9
+- fars:
+  - applyAction: Forward
+    farID: 19
+    forwardingParameters:
+      destinationInterface: SGiLAN
+      networkInstance: core.oai.org
+  - applyAction: Forward
+    farID: 20
+    forwardingParameters:
+      destinationInterface: Access
+      networkInstance: access.oai.org
+      outerHeaderCreation:
+        desc: OUTER_HEADER_CREATION_GTPU_UDP_IPV4
+        ip: 192.168.71.130
+        teid: 10
+  pdrs:
+  - farID: 19
+    outerHeaderRemoval: OUTER_HEADER_GTPU_UDP_IPV4
+    pdi:
+      localFTEID:
+        ip4: 192.168.71.134
+        teid: 10
+      networkInstance: access.oai.org
+      sourceInterface: Access
+      ueIPAddress:
+        ip4: 16.0.0.10
+        isDestination: false
+    pdrID: 19
+    precedence: 0
+  - farID: 20
+    pdi:
+      networkInstance: core.oai.org
+      sourceInterface: SGiLAN
+      ueIPAddress:
+        ip4: 16.0.0.10
+        isDestination: true
+    pdrID: 20
+    precedence: 0
+  seid: 10
