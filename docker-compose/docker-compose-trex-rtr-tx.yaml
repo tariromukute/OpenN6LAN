@@ -1,0 +1,97 @@
+version: "3.9"
+
+volumes:
+  debugfs:
+    driver: local
+    driver_opts:
+      type: debugfs
+      device: debugfs
+
+services:
+  trex:
+    image: tariromukute/cisco-trex:latest
+    volumes:
+      - ./conf/trex_rtr_tx_cfg.yaml:/etc/trex_cfg.yaml
+    container_name: "trex"
+    hostname: "trex"
+    stdin_open: true
+    tty: true   
+    ports:
+      - "4500:4500"
+      - "4501:4501"
+      - "4507:4507"
+      - "4500:4500/udp"
+      - "4501:4501/udp"
+      - "4507:4507/udp"
+    networks:
+      control_net:
+        ipv4_address: 192.168.70.130
+        priority: 1000
+      n3_net:
+        ipv4_address: 192.168.71.130
+        priority: 900
+      ndata_net:
+        ipv4_address: 192.168.73.137
+        priority: 800
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    command: ["./t-rex-64", "-i", "--cfg", "/etc/trex_cfg.yaml"]
+    privileged: true
+
+
+  router:
+    image: tariromukute/router:latest
+    container_name: "router"
+    hostname: "router"
+    depends_on:
+      - trex
+    stdin_open: true
+    tty: true   
+    networks:
+      control_net:
+        ipv4_address: 192.168.70.134
+        priority: 1000
+      n3_net:
+        ipv4_address: 192.168.71.134
+        priority: 900
+      ndata_net:
+        ipv4_address: 192.168.73.138
+        priority: 800
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - debugfs:/sys/kernel/debug:rw
+    command:
+      - sh 
+      - -c
+      - |
+        # Wait 5s for TREX to get MAC addresses
+        sleep 5
+        cd xdp-bench && ./xdp-bench tx -p swap-ips -m skb eth1
+    privileged: true
+
+networks:
+  control_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.70.128/26
+  n3_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.71.128/26
+  n6_net:
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.72.128/26
+  ndata_net:
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.73.128/26

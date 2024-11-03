@@ -34,3 +34,8 @@ update -m 200mbps
 
 docker compose -f docker-compose-trex-dut.yaml down
 ```
+
+## Send from single interface
+
+To use a single interface we configure TREX to use a dummy interface for the second interface. See `docker-compose/conf/trex_rtr_tx_cfg.yaml`.
+
